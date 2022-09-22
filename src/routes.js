@@ -15,20 +15,24 @@ router.get("/farms/:id", function farmGet(req, res) {
   res.status(200).json(farm);
 });
 
-router.post("/farms/new", function farmNew(req, res) {
-  const farm = req.body;
-  console.log(farm);
-  res.status(200).json(farm);
+router.post("/farms/new", async function farmNew(req, res) {
+  const farmParams = req.body;
+  const farmObj = await Farm.create(farmParams);
+  res.status(200).json(farmObj);
 });
 
-function farmUpdate(req, res) {
-  const farm = req.body;
-  res.status(200).json(farm);
+async function farmUpdate(req, res) {
+  const id = req.params.id;
+  const farmParam = req.body;
+  const farmObj = await Farm.update(farmParam, { where: { id } });
+  res.status(200).json(farmObj);
 }
 router.put("/farms/:id", farmUpdate);
 router.patch("/farms/:id", farmUpdate);
 
-router.delete("/farms/:id", function farmDelete(req, res) {
+router.delete("/farms/:id", async function farmDelete(req, res) {
+  const id = req.params.id;
+  await Farm.destroy({ where: { id }, force: true });
   res.status(200).json({ status: "OK" });
 });
 

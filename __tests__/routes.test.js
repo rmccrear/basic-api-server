@@ -48,12 +48,18 @@ describe("CRUD tests for farms", () => {
   });
   test("It should create a farm", async () => {
     const resp = await request.post("/farms/new").send({ name: "New Farm 3" });
-    const farm = resp.body;
-    expect(farm).toEqual(expect.objectContaining({ name: "New Farm 3" }));
+    const farmResp = resp.body;
+    const farmObj = await Farm.findOne({ where: { id: farmResp.id } });
+    expect(farmObj).toEqual(expect.objectContaining({ name: "New Farm 3" }));
   });
   test("It should update a farm", async () => {
     const resp = await request.patch("/farms/1").send({ name: "Updated Farm" });
-    const farm = resp.body;
-    expect(farm).toEqual(expect.objectContaining({ name: "Updated Farm" }));
+    const farmObj = await Farm.findOne({ where: { id: "1" } });
+    expect(farmObj).toEqual(expect.objectContaining({ name: "Updated Farm" }));
+  });
+  test("It should delete a farm", async () => {
+    const resp = await request.delete("/farms/1").send();
+    const farmObj = await Farm.findOne({ where: { id: "1" } });
+    expect(farmObj).toBe(null);
   });
 });
