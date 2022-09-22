@@ -1,13 +1,11 @@
 const { Router, json } = require("express");
+const { Farm } = require("./models");
 
 const router = Router();
 router.use(json());
 // farms
-router.get("/farms", function farmIndex(req, res) {
-  const farmList = [
-    { id: 1, name: "Farm 1" },
-    { id: 2, name: "Farm 2" },
-  ];
+router.get("/farms", async function farmIndex(req, res) {
+  const farmList = await Farm.findAll();
   res.status(200).json(farmList);
 });
 

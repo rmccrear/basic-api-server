@@ -1,6 +1,9 @@
 const express = require("express");
 const supertest = require("supertest");
 
+const sq = require("../db");
+const { Farm } = require("../src/models");
+
 const routes = require("../src/routes");
 
 const app = express();
@@ -19,11 +22,24 @@ const mockFarms = [
   },
 ];
 
+let farms;
+
 describe("CRUD tests for farms", () => {
+  beforeEach(async () => {
+    try {
+      await Farm.sync({ force: true });
+      const farm1 = await Farm.create({ name: "Farm 1" });
+      const farm2 = await Farm.create({ name: "Farm 2" });
+    } catch (e) {
+      console.log(e);
+    }
+  });
   test("It should get an index", async () => {
     const resp = await request.get("/farms");
     const farms = resp.body;
-    expect(farms).toEqual(expect.arrayContaining(mockFarms));
+    expect(farms).toEqual(
+      expect.arrayContaining([expect.objectContaining(mockFarms[0])])
+    );
   });
   test("It should get a farm", async () => {
     const resp = await request.get("/farms/1");
